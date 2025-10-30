@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Twitter Sentiment Data Collection Pipeline
 
 A real-time data streaming pipeline that collects Twitter data, processes it through Kafka, and stores it in PostgreSQL for sentiment analysis.
@@ -230,3 +231,6 @@ If you encounter build errors when installing requirements (especially for `pand
 - Kafka UI: http://localhost:8090
 - Database: localhost:5433
 - Redis: localhost:6379
+=======
+# Social-Media-Trends-and-Emotional-Analyzer
+>>>>>>> fe8162747a1979f7fbd23d81a86413d3d3484580
