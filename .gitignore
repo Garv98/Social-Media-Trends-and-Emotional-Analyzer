@@ -1,0 +1,126 @@
+# Python cache and compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# Environment variables
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+test_venv/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Log files and runtime data
+logs/
+*.log
+tweet_collection.log
+
+# Database files
+*.db
+*.sqlite3
+
+# Large data files
+*.csv
+*.tsv
+*.json
+*.xlsx
+*.parquet
+*.h5
+data/
+datasets/
+
+# Docker
+.dockerignore
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.bak
+temp/
+tmp/
+
+# EDA Dashboard outputs (keep only latest)
+eda_dashboard_*/
+dashboard_output/
+
+# Data quality reports (these can be large and regenerated)
+data_quality_report_*.json
+
+# Redis dump files
+dump.rdb
+
+# Kafka logs
+kafka-logs/
+
+# Node modules (if any frontend components)
+node_modules/
+
+# Secrets and API keys
+*.pem
+*.key
+secrets/
