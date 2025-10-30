@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Twitter Sentiment Data Collection Pipeline
 
 A real-time data streaming pipeline that collects Twitter data, processes it through Kafka, and stores it in PostgreSQL for sentiment analysis.
