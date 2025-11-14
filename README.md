@@ -1,0 +1,1 @@
+# Social-Media-Trends-and-emotional-analyzer
