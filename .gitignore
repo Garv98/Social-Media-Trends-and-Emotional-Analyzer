@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+.env
+.env.*
+.venv/
+
+# Data
+/data/raw/*.tmp
+/data/raw/*.log
+/data/processed/*.tmp
+
+# VSCode
+.vscode/
+
+# Docker
+*.log
+
+# DVC
+.dvc/

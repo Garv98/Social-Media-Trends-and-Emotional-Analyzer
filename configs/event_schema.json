@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mlops-project.local/schemas/social-event.json",
+  "title": "SocialEvent",
+  "description": "Schema for social media events collected from various platforms",
+  "type": "object",
+  "required": ["id", "platform", "text", "timestamp"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique event identifier (UUID v4)",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "platform": {
+      "type": "string",
+      "description": "Source platform",
+      "enum": ["reddit", "twitter", "youtube"]
+    },
+    "text": {
+      "type": "string",
+      "description": "Cleaned and preprocessed text content",
+      "minLength": 1
+    },
+    "timestamp": {
+      "type": "string",
+      "description": "Event creation timestamp in ISO 8601 format (UTC)",
+      "format": "date-time"
+    },
+    "raw_text": {
+      "type": "string",
+      "description": "Original unprocessed text before cleaning"
+    },
+    "author": {
+      "type": "string",
+      "description": "Username or author identifier"
+    },
+    "lang": {
+      "type": "string",
+      "description": "ISO 639-1 language code",
+      "pattern": "^[a-z]{2}$"
+    },
+    "engagement": {
+      "type": "object",
+      "description": "Engagement metrics (platform-specific)",
+      "properties": {
+        "likes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "replies": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "shares": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "score": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "num_comments": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": true
+    },
+    "meta": {
+      "type": "object",
+      "description": "Platform-specific metadata",
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}
