@@ -26,20 +26,13 @@ sources:
     ]
     query: ""  # Empty = get ALL posts (no filtering by keywords)
     poll_interval_sec: 60  # Poll every 60 seconds
-    limit_per_call: 10  # 10 posts per subreddit = 150 posts per poll
+    limit_per_call: 1  # 10 posts per subreddit = 150 posts per poll
 
 sinks:
   file:
     root_dir: data/raw
     partition_by: date  # date or hour
     filename_pattern: "events-%Y-%m-%d.jsonl"
-
-  kafka:
-    bootstrap_servers: "localhost:9092"
-    topic: "social-media-events"  # Topic for global real-time streaming
-    acks: 1
-    compression_type: "snappy"  # Compress for better network efficiency
-    max_in_flight_requests: 5
 
 preprocess:
   text:

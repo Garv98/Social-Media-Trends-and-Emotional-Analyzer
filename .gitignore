@@ -11,6 +11,7 @@ __pycache__/
 /data/raw/*.tmp
 /data/raw/*.log
 /data/processed/*.tmp
+data/dedup_cache.json
 
 # VSCode
 .vscode/

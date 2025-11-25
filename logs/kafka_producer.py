@@ -1,40 +1,4 @@
-# ============================================
-# Automated Kafka Producer
-# ============================================
-# Streams collected data to Kafka for global real-time access
-# Usage: .\scripts\start_kafka_producer.ps1
-
-param(
-    [string]$KafkaBootstrap = "localhost:9092",
-    [string]$Topic = "social-media-events",
-    [int]$MaxRestarts = 999
-)
-
-$ErrorActionPreference = "Continue"
-$LogDir = "logs"
-$LogFile = "$LogDir\kafka-producer-$(Get-Date -Format 'yyyy-MM-dd').log"
-
-if (-not (Test-Path $LogDir)) {
-    New-Item -ItemType Directory -Path $LogDir | Out-Null
-}
-
-function Write-Log {
-    param([string]$Message, [string]$Level = "INFO")
-    $Timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-    $LogMessage = "[$Timestamp] [$Level] $Message"
-    Write-Host $LogMessage
-    Add-Content -Path $LogFile -Value $LogMessage
-}
-
-Write-Log "=== KAFKA PRODUCER STARTED ===" "INFO"
-Write-Log "Kafka Bootstrap: $KafkaBootstrap" "INFO"
-Write-Log "Topic: $Topic" "INFO"
-
-$RestartCount = 0
-
-# Create Kafka producer script
-$ProducerScript = @'
-import sys
+﻿import sys
 import json
 import time
 from pathlib import Path
@@ -95,28 +59,3 @@ if __name__ == '__main__':
     
     print(f"Tailing file: {file_path}")
     tail_file(file_path, producer, topic)
-'@
-
-$ProducerScriptPath = "$LogDir\kafka_producer.py"
-$ProducerScript | Out-File -FilePath $ProducerScriptPath -Encoding UTF8
-
-while ($RestartCount -lt $MaxRestarts) {
-    try {
-        Write-Log "Starting Kafka producer (Attempt $($RestartCount + 1))" "INFO"
-        
-        py -3 $ProducerScriptPath $KafkaBootstrap $Topic 2>&1 | ForEach-Object {
-            Write-Log $_ "INFO"
-        }
-        
-    } catch {
-        Write-Log "Error: $($_.Exception.Message)" "ERROR"
-    }
-    
-    $RestartCount++
-    if ($RestartCount -lt $MaxRestarts) {
-        Write-Log "Restarting in 10 seconds..." "WARN"
-        Start-Sleep -Seconds 10
-    }
-}
-
-Write-Log "=== KAFKA PRODUCER STOPPED ===" "INFO"

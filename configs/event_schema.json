@@ -72,5 +72,9 @@
       "additionalProperties": true
     }
   },
-  "additionalProperties": false
+  "additionalProperties": false,
+  "emotion_prediction": {
+  "type": "object",
+  "description": "Emotion analysis result from ML model"
+}
 }

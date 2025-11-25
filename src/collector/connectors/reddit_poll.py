@@ -1,3 +1,4 @@
+from src.common.preprocess.emotion_predict import enrich_with_emotion
 import time
 import os
 import uuid
@@ -109,6 +110,8 @@ def run_poll(config_path: str = 'configs/config.yaml'):
                 if dedup.is_duplicate(event):
                     metrics.log_event(deduplicated=True)
                     continue
+                
+                event = enrich_with_emotion(event)
                 
                 sink.write(event)
                 metrics.log_event(deduplicated=False)
