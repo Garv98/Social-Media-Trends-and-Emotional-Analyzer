@@ -4,7 +4,12 @@
   "title": "SocialEvent",
   "description": "Schema for social media events collected from various platforms",
   "type": "object",
-  "required": ["id", "platform", "text", "timestamp"],
+  "required": [
+    "id",
+    "platform",
+    "text",
+    "timestamp"
+  ],
   "properties": {
     "id": {
       "type": "string",
@@ -14,7 +19,11 @@
     "platform": {
       "type": "string",
       "description": "Source platform",
-      "enum": ["reddit", "twitter", "youtube"]
+      "enum": [
+        "reddit",
+        "twitter",
+        "youtube"
+      ]
     },
     "text": {
       "type": "string",
@@ -74,7 +83,7 @@
   },
   "additionalProperties": false,
   "emotion_prediction": {
-  "type": "object",
-  "description": "Emotion analysis result from ML model"
-}
+    "type": "object",
+    "description": "Emotion analysis result from ML model"
+  }
 }
