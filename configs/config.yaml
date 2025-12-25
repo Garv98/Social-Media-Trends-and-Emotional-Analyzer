@@ -3,7 +3,7 @@ app:
   timezone: UTC
 
 stream:
-  sink: file  
+  sink: supabase
   batch_size: 1
   flush_interval_ms: 500
 
@@ -27,6 +27,8 @@ sinks:
     root_dir: data/raw
     partition_by: date
     filename_pattern: "events-%Y-%m-%d.jsonl"
+  supabase:
+    table_name: reddit_posts
 
 preprocess:
   text:

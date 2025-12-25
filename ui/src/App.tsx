@@ -4,11 +4,12 @@ import {
   PieChart, Pie, Cell, Legend
 } from 'recharts';
 import {
-  Activity, ArrowUpRight, MessageSquare, Shield, Sun, Moon,
-  TrendingUp, BarChart3, List, RefreshCw
+  Activity, ArrowUpRight, MessageSquare, Sun, Moon,
+  TrendingUp, BarChart3, List
 } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { supabase } from './supabaseClient';
 
 // Helper for tailwind-like class merging
 function cn(...inputs: ClassValue[]) {
@@ -59,32 +60,44 @@ const EMOTION_COLORS: Record<string, string> = {
 export default function App() {
   const [data, setData] = useState<RedditPost[]>([]);
   const [loading, setLoading] = useState(true);
-  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const [theme, setTheme] = useState<'light' | 'dark'>('dark');
   const [lastUpdate, setLastUpdate] = useState<string>('');
 
   useEffect(() => {
     fetchData();
-    const interval = setInterval(fetchData, 60000); // Refresh every minute
+    const interval = setInterval(fetchData, 30000); // Refresh every 30s
     return () => clearInterval(interval);
   }, []);
 
   const fetchData = async () => {
     try {
-      const today = new Date();
-      /* 
-         NOTE: In a production app, we would fetch a list of files or use a dynamic URL.
-         For this demo, we'll try to fetch the 2025/11/25 file directly as seen in logs.
-      */
-      const response = await fetch('http://localhost:8000/2025/11/25/events-2025-11-25.jsonl');
-      const text = await response.text();
-      const lines = text.trim().split('\n');
-      const parsedData = lines.map(line => JSON.parse(line)) as RedditPost[];
+      // Fetch latest 500 posts from Supabase
+      const { data: posts, error } = await supabase
+        .from('reddit_posts')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(500);
 
-      setData(parsedData.reverse()); // Show newest first
-      setLastUpdate(new Date().toLocaleTimeString());
+      if (error) throw error;
+
+      if (posts) {
+        // Map data back to our preferred structure if needed
+        const parsedData = posts.map(p => ({
+          ...p.raw_data,
+          // Ensure values from flat columns take precedence or match
+          emotion_prediction: {
+            label: p.emotion_label,
+            score: p.emotion_score,
+            raw_scores: p.raw_data.emotion_prediction.raw_scores
+          }
+        })) as RedditPost[];
+
+        setData(parsedData);
+        setLastUpdate(new Date().toLocaleTimeString());
+      }
       setLoading(false);
     } catch (error) {
-      console.error('Error fetching data:', error);
+      console.error('Error fetching data from Supabase:', error);
       setLoading(false);
     }
   };
@@ -102,7 +115,9 @@ export default function App() {
     return acc;
   }, {} as Record<string, number>);
 
-  const pieData = Object.entries(emotionDistribution).map(([name, value]) => ({ name, value }));
+  const pieData = Object.entries(emotionDistribution)
+    .map(([name, value]) => ({ name, value }))
+    .sort((a, b) => b.value - a.value);
 
   const subredditStats = data.reduce((acc, post) => {
     const sub = post.meta.subreddit;
@@ -117,11 +132,11 @@ export default function App() {
 
   const barData = Object.values(subredditStats).sort((a: any, b: any) => b.count - a.count).slice(0, 8);
 
-  if (loading) {
+  if (loading && data.length === 0) {
     return (
       <div className="loader-container">
         <div className="spinner"></div>
-        <p className="metric-label">Analyzing emotional trends...</p>
+        <p className="metric-label">Connecting to Supabase...</p>
       </div>
     );
   }
@@ -138,7 +153,7 @@ export default function App() {
             <h1>Reddit Emotional Analyzer</h1>
             <div className="status-badge">
               <div className="pulse"></div>
-              Live Pipeline Active
+              Cloud Database Active
             </div>
           </div>
         </div>
@@ -164,12 +179,12 @@ export default function App() {
         <div className="glass-card metric-card">
           <span className="metric-label">Dominant Emotion</span>
           <span className="metric-value" style={{ color: EMOTION_COLORS[pieData[0]?.name] || 'var(--reddit-orange)', textTransform: 'capitalize' }}>
-            {pieData.sort((a, b) => b.value - a.value)[0]?.name || 'N/A'}
+            {pieData[0]?.name || 'N/A'}
           </span>
         </div>
         <div className="glass-card metric-card">
-          <span className="metric-label">Pipeline Health</span>
-          <span className="metric-value" style={{ color: '#22c55e' }}>100%</span>
+          <span className="metric-label">DB Status</span>
+          <span className="metric-value" style={{ color: '#22c55e' }}>Online</span>
         </div>
       </section>
 
@@ -249,11 +264,11 @@ export default function App() {
               <div className="post-footer">
                 <div className="interaction-item">
                   <ArrowUpRight size={16} />
-                  {post.engagement.score.toLocaleString()}
+                  {post.engagement.score?.toLocaleString() || 0}
                 </div>
                 <div className="interaction-item">
                   <MessageSquare size={16} />
-                  {post.engagement.num_comments.toLocaleString()}
+                  {post.engagement.num_comments?.toLocaleString() || 0}
                 </div>
                 <div className="interaction-item" style={{ marginLeft: 'auto' }}>
                   {new Date(post.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
