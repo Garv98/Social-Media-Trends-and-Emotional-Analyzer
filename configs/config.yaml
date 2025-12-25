@@ -3,8 +3,7 @@ app:
   timezone: UTC
 
 stream:
-  # choose: file or kafka (dual sink not yet implemented)
-  sink: file  # Using file sink - Kafka producer script streams from file
+  sink: file  
   batch_size: 1
   flush_interval_ms: 500
 
@@ -13,25 +12,20 @@ sources:
     enabled: true
     mode: poll
     subreddits: [
-      # News & Current Events
       "news", "worldnews", "politics",
-      # Technology & Science
       "technology", "science", "Futurology",
-      # Entertainment
       "movies", "gaming", "Music",
-      # Lifestyle
       "fitness", "todayilearned", "LifeProTips",
-      # Finance & Sports
       "stocks", "sports", "AskReddit"
     ]
-    query: ""  # Empty = get ALL posts (no filtering by keywords)
-    poll_interval_sec: 60  # Poll every 60 seconds
-    limit_per_call: 1  # 10 posts per subreddit = 150 posts per poll
+    query: ""  
+    poll_interval_sec: 60  
+    limit_per_call: 1  
 
 sinks:
   file:
     root_dir: data/raw
-    partition_by: date  # date or hour
+    partition_by: date
     filename_pattern: "events-%Y-%m-%d.jsonl"
 
 preprocess:
