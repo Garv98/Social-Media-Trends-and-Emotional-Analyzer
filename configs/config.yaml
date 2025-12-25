@@ -19,7 +19,7 @@ sources:
       "stocks", "sports", "AskReddit"
     ]
     query: ""  
-    poll_interval_sec: 60  
+    poll_interval_sec: 900
     limit_per_call: 1  
 
 sinks:

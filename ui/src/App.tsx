@@ -5,7 +5,7 @@ import {
 } from 'recharts';
 import {
   Activity, ArrowUpRight, MessageSquare, Sun, Moon,
-  TrendingUp, BarChart3, List
+  TrendingUp, BarChart3, List, RefreshCw
 } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
@@ -62,29 +62,28 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [theme, setTheme] = useState<'light' | 'dark'>('dark');
   const [lastUpdate, setLastUpdate] = useState<string>('');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
 
   useEffect(() => {
     fetchData();
-    const interval = setInterval(fetchData, 30000); // Refresh every 30s
+    const interval = setInterval(fetchData, 60000); // UI Refresh every 1m
     return () => clearInterval(interval);
-  }, []);
+  }, [sortOrder]);
 
   const fetchData = async () => {
     try {
-      // Fetch latest 500 posts from Supabase
+      // Fetch posts from Supabase with the chosen sort order
       const { data: posts, error } = await supabase
         .from('reddit_posts')
         .select('*')
-        .order('created_at', { ascending: false })
+        .order('created_at', { ascending: sortOrder === 'asc' })
         .limit(500);
 
       if (error) throw error;
 
       if (posts) {
-        // Map data back to our preferred structure if needed
         const parsedData = posts.map(p => ({
           ...p.raw_data,
-          // Ensure values from flat columns take precedence or match
           emotion_prediction: {
             label: p.emotion_label,
             score: p.emotion_score,
@@ -106,6 +105,10 @@ export default function App() {
     const newTheme = theme === 'light' ? 'dark' : 'light';
     setTheme(newTheme);
     document.documentElement.setAttribute('data-theme', newTheme);
+  };
+
+  const toggleSort = () => {
+    setSortOrder(prev => prev === 'desc' ? 'asc' : 'desc');
   };
 
   // Analytics Helpers
@@ -159,6 +162,9 @@ export default function App() {
         </div>
 
         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+          <button className="theme-toggle" onClick={toggleSort} title={`Sort by Date: ${sortOrder === 'desc' ? 'Latest First' : 'Oldest First'}`}>
+            <RefreshCw size={20} className={loading ? 'animate-spin' : ''} />
+          </button>
           <p className="metric-label">Last updated: {lastUpdate}</p>
           <button className="theme-toggle" onClick={toggleTheme}>
             {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
