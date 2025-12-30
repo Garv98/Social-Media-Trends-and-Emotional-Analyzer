@@ -13,7 +13,7 @@ try:
 except Exception as e:  # pragma: no cover
     praw = None
 
-from src.common.sinks import FileSink, KafkaSink
+from src.common.sinks import FileSink, KafkaSink, SupabaseSink
 from src.common.preprocess.text_clean import clean_text
 from src.common.preprocess.dedup import Deduplicator
 from src.common.utils.metrics import MetricsLogger
@@ -32,6 +32,9 @@ def make_sink(cfg: Dict):
     elif sink_type == 'kafka':
         c = cfg['sinks']['kafka']
         return KafkaSink(bootstrap_servers=c['bootstrap_servers'], topic=c['topic'], acks=c.get('acks', 1))
+    elif sink_type == 'supabase':
+        c = cfg['sinks'].get('supabase', {})
+        return SupabaseSink(table_name=c.get('table_name', 'reddit_posts'))
     else:
         raise ValueError(f"Unknown sink type: {sink_type}")
 
