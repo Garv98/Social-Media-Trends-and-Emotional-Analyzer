@@ -21,3 +21,5 @@ data/dedup_cache.json
 
 # DVC
 .dvc/
+
+dvc_store/
